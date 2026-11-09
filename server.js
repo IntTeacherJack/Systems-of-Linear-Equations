@@ -6,16 +6,18 @@ const port = 8000;
 
 http
   .createServer((request, response) => {
-    const pathname = request.url === "/" ? "/index.html" : request.url;
-    const filePath = path.join(__dirname, pathname);
+    const pathname = request.url === "/" ? "/index.html" : new URL(request.url, "http://localhost").pathname;
+    const filePath = path.resolve(__dirname, `.${pathname}`);
+    const allowedRoot = `${__dirname}${path.sep}`;
 
-    if (pathname !== "/index.html" || !fs.existsSync(filePath)) {
+    if (!filePath.startsWith(allowedRoot) || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
       response.writeHead(404, { "Content-Type": "text/plain" });
       response.end("Not found");
       return;
     }
 
-    response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    const types = { ".css": "text/css", ".html": "text/html", ".js": "text/javascript" };
+    response.writeHead(200, { "Content-Type": `${types[path.extname(filePath)] || "application/octet-stream"}; charset=utf-8` });
     response.end(fs.readFileSync(filePath));
   })
   .listen(port, () => console.log(`Local server running at http://localhost:${port}`));
