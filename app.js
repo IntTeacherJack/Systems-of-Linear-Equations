@@ -16,6 +16,8 @@ document.querySelectorAll("[data-choice]").forEach((group) => group.querySelecto
   button.classList.add("selected");
   if (group.dataset.choice === "lantern") feedback("lantern-feedback", button.textContent === "Model A" ? "Good prediction: the lower-cost lantern needs to make up more of the total." : "Keep an open mind—your calculation will confirm it.", button.textContent === "Model A");
   if (group.dataset.choice === "travel") feedback("travel-feedback", button.textContent === "Bike then bus" ? "Exactly. Bike hire begins cheaper, but its cost rises faster." : "Look at both starting costs and rates: this will become clear on the graph.", button.textContent === "Bike then bus");
+  if (group.dataset.choice === "refill") feedback("refill-feedback", button.textContent === "Plan A" ? "Correct. Plan A starts at $4, while Plan B starts at $12." : "Compare the starting fees: Plan A begins at $4 and Plan B begins at $12.", button.textContent === "Plan A");
+  if (group.dataset.choice === "lunch") feedback("lunch-feedback", button.textContent === "Standard" ? "Correct. The final solution has 28 standard lunches and 24 vegetarian lunches." : "The average price is $292 ÷ 52, about $5.62, so the $7 lunch must occur more often than the $4 lunch.", button.textContent === "Standard");
 })));
 
 document.getElementById("elimination-form")?.addEventListener("submit", (event) => {
@@ -28,6 +30,18 @@ document.getElementById("graph-form")?.addEventListener("submit", (event) => {
   event.preventDefault();
   const hours = Number(document.getElementById("hours").value), cost = Number(document.getElementById("cost").value);
   feedback("graph-feedback", hours === 4 && cost === 12 ? "Correct. At 4 hours, both options cost $12." : "Try reading where both lines share the same y-value. Reveal the intersection if you need a clue.", hours === 4 && cost === 12);
+});
+
+document.getElementById("equating-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const x = Number(document.getElementById("equating-x").value), y = Number(document.getElementById("equating-y").value);
+  feedback("equating-feedback", x === 4 && y === 16 ? "Correct. After 4 refills, both plans cost $16." : "Not quite. Set 3x + 4 equal to x + 12, then use your x-value to find y.", x === 4 && y === 16);
+});
+
+document.getElementById("substitution-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const v = Number(document.getElementById("substitution-v").value), s = Number(document.getElementById("substitution-s").value);
+  feedback("substitution-feedback", v === 24 && s === 28 ? "Correct. 24 vegetarian and 28 standard lunches meet both conditions." : "Not quite. Check that the total is 52 and that 4v + 7s = 292.", v === 24 && s === 28);
 });
 
 const svg = document.getElementById("cost-graph");
@@ -89,6 +103,26 @@ renderPractice({
     { topic: "Recycling drive", title: "Two types of collection bags", prompt: "A recycling group filled 54 bags. Paper bags weigh 3 kg and plastic bags weigh 5 kg. The total mass was 198 kg. How many bags of each type were filled?", equations: "p + q = 54 &nbsp;&nbsp; 3p + 5q = 198", labelOne: "Paper bags", labelTwo: "Plastic bags", answerOne: 36, answerTwo: 18, success: "There are 36 paper bags and 18 plastic bags.", hint: "Your two values must add to 54 and their weighted mass must be 198 kg." },
     { topic: "School garden", title: "Seedling trays", prompt: "A garden has 44 seedling trays. Small trays hold 6 seedlings and large trays hold 10 seedlings. There are 328 seedlings altogether. How many of each tray are there?", equations: "s + l = 44 &nbsp;&nbsp; 6s + 10l = 328", labelOne: "Small trays", labelTwo: "Large trays", answerOne: 28, answerTwo: 16, success: "There are 28 small trays and 16 large trays.", hint: "Make sure the tray counts total 44 and the seedling count totals 328." },
     { topic: "Sports event", title: "Ticket sales", prompt: "A match sold 90 tickets. Student tickets cost $4 and adult tickets cost $7. The total income was $495. How many of each ticket were sold?", equations: "s + a = 90 &nbsp;&nbsp; 4s + 7a = 495", labelOne: "Student tickets", labelTwo: "Adult tickets", answerOne: 45, answerTwo: 45, success: "There are 45 student tickets and 45 adult tickets.", hint: "Check the ticket total and total income separately." }
+  ]
+});
+
+renderPractice({
+  formId: "equating-practice-form", topicId: "equating-practice-topic", titleId: "equating-practice-title", promptId: "equating-practice-prompt", equationsId: "equating-practice-equations", labelOneId: "equating-label-one", labelTwoId: "equating-label-two", inputOneId: "equating-practice-one", inputTwoId: "equating-practice-two", feedbackId: "equating-practice-feedback", nextId: "equating-next", streakId: "equating-streak", questionNumberId: "equating-question-number",
+  questions: [
+    { topic: "Water refill", title: "Two refill plans", prompt: "Plan A costs $4 plus $3 per refill. Plan B costs $12 plus $1 per refill. After how many refills do the plans cost the same, and what is the cost?", equations: "Plan A: y = 3x + 4 &nbsp;&nbsp; Plan B: y = x + 12", labelOne: "Refills", labelTwo: "Equal cost ($)", answerOne: 4, answerTwo: 16, success: "After 4 refills, both plans cost $16.", hint: "Set 3x + 4 equal to x + 12, then substitute to find the cost." },
+    { topic: "Delivery options", title: "Comparing bicycle couriers", prompt: "Courier A charges $5 plus $2 per kilometre. Courier B charges $11 plus $0.50 per kilometre. At what distance do the charges match, and what is the charge?", equations: "Courier A: y = 2x + 5 &nbsp;&nbsp; Courier B: y = 0.5x + 11", labelOne: "Distance (km)", labelTwo: "Equal charge ($)", answerOne: 4, answerTwo: 13, success: "At 4 km, both couriers charge $13.", hint: "Equate the two charge expressions before finding the distance." },
+    { topic: "Phone plans", title: "Choosing a data plan", prompt: "Plan A costs $2 plus $4 per data unit. Plan B costs $14 plus $1 per data unit. At how many data units are the costs the same, and what is the cost?", equations: "Plan A: y = 4x + 2 &nbsp;&nbsp; Plan B: y = x + 14", labelOne: "Data units", labelTwo: "Equal cost ($)", answerOne: 4, answerTwo: 18, success: "At 4 data units, both plans cost $18.", hint: "Both expressions give y, so make them equal to each other." },
+    { topic: "Fundraising", title: "Matching totals", prompt: "Group A starts with $6 and raises $3 per week. Group B starts with $14 and raises $1 per week. After how many weeks do their totals match, and what is the total?", equations: "Group A: y = 3x + 6 &nbsp;&nbsp; Group B: y = x + 14", labelOne: "Weeks", labelTwo: "Equal total ($)", answerOne: 4, answerTwo: 18, success: "After 4 weeks, both groups have $18.", hint: "Start by setting 3x + 6 equal to x + 14." }
+  ]
+});
+
+renderPractice({
+  formId: "substitution-practice-form", topicId: "substitution-practice-topic", titleId: "substitution-practice-title", promptId: "substitution-practice-prompt", equationsId: "substitution-practice-equations", labelOneId: "substitution-label-one", labelTwoId: "substitution-label-two", inputOneId: "substitution-practice-one", inputTwoId: "substitution-practice-two", feedbackId: "substitution-practice-feedback", nextId: "substitution-next", streakId: "substitution-streak", questionNumberId: "substitution-question-number",
+  questions: [
+    { topic: "School supplies", title: "Notebook orders", prompt: "A school buys 45 notebooks. Plain notebooks cost $2 and illustrated notebooks cost $5. The total cost is $153. How many of each type were bought?", equations: "p + i = 45 &nbsp;&nbsp; 2p + 5i = 153", labelOne: "Plain notebooks", labelTwo: "Illustrated notebooks", answerOne: 24, answerTwo: 21, success: "The school bought 24 plain and 21 illustrated notebooks.", hint: "Rearrange p + i = 45 first, then substitute into the cost equation." },
+    { topic: "Community garden", title: "Planting pots", prompt: "A garden has 38 planting pots. Small pots cost $3 and large pots cost $6. The total cost is $159. How many of each size are there?", equations: "s + l = 38 &nbsp;&nbsp; 3s + 6l = 159", labelOne: "Small pots", labelTwo: "Large pots", answerOne: 23, answerTwo: 15, success: "There are 23 small pots and 15 large pots.", hint: "Use one equation to write one type of pot in terms of the other." },
+    { topic: "Café orders", title: "Lunch combinations", prompt: "A café sold 60 lunch combinations. Salad meals cost $5 and pasta meals cost $8. The total income was $378. How many of each meal were sold?", equations: "s + p = 60 &nbsp;&nbsp; 5s + 8p = 378", labelOne: "Salad meals", labelTwo: "Pasta meals", answerOne: 34, answerTwo: 26, success: "The café sold 34 salad meals and 26 pasta meals.", hint: "Substitute s = 60 − p into the second equation." },
+    { topic: "Sports club", title: "Equipment hire", prompt: "A club hired 36 items of equipment. Rackets cost $4 to hire and helmets cost $7. The total fee was $204. How many of each item were hired?", equations: "r + h = 36 &nbsp;&nbsp; 4r + 7h = 204", labelOne: "Rackets", labelTwo: "Helmets", answerOne: 16, answerTwo: 20, success: "The club hired 16 rackets and 20 helmets.", hint: "Make one variable the subject of r + h = 36, then replace it in the fee equation." }
   ]
 });
 
